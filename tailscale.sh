@@ -79,8 +79,11 @@ if [ "$current_enabled" = "$enabled" ]; then
 fi
 
 # Replace the enabled value in the config (true/false) using sed
-updated_config=$(echo "$config" | sed "s/\"enabled\":[^,}]*/\"enabled\":$enabled/")
-echo "Updated config: $updated_config"
+# Then remove lan_ip from the updated config before sending it
+updated_config=$(echo "$config" \
+  | sed "s/\"enabled\":[^,}]*/\"enabled\":$enabled/" \
+  | sed 's/,"lan_ip":[^,}]*//')
+echo "Updated config (lan_ip removed): $updated_config"
 echo "Setting config with enabled=$enabled..."
 
 # Build JSON-RPC payload for set_config dynamically
