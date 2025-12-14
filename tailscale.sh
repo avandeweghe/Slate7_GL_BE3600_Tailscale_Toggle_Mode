@@ -1,6 +1,10 @@
 #!/bin/sh
 # /etc/gl-switch. d/tailscale.sh
 
+# Set to 1 to enable masquerading on tailscale0 when Tailscale is enabled,
+# or 0 to skip all masquerade changes.
+MASQ_ENABLED=0
+
 # Helper: enable masquerading on tailscale0 zone in OpenWrt firewall
 enable_masquerade() {
   # Wait up to 30 seconds for tailscale0 interface to appear
@@ -72,7 +76,7 @@ current_enabled=$(echo "$config" | jsonfilter -e '@.enabled')
 if [ "$current_enabled" = "$enabled" ]; then
   echo "No change needed: enabled is already $current_enabled"
   # Still ensure masquerading is enabled when tailscale is enabled
-  if [ "$enabled" = true ]; then
+  if [ "$enabled" = true ] && [ "$MASQ_ENABLED" = "1" ]; then
     enable_masquerade
   fi
   exit 0
@@ -82,7 +86,7 @@ fi
 # Then remove lan_ip from the updated config before sending it
 updated_config=$(echo "$config" \
   | sed "s/\"enabled\":[^,}]*/\"enabled\":$enabled/" \
-  | sed 's/,"lan_ip":[^,}]*//')
+  | sed 's/"lan_ip" *:[^,}]*, *//; s/, *"lan_ip" *:[^,}]*//')
 echo "Updated config (lan_ip removed): $updated_config"
 echo "Setting config with enabled=$enabled..."
 
@@ -97,6 +101,6 @@ echo ""
 echo "Config updated successfully"
 
 # Enable masquerading when tailscale is enabled
-if [ "$enabled" = true ]; then
+if [ "$enabled" = true ] && [ "$MASQ_ENABLED" = "1" ]; then
   enable_masquerade
 fi
