@@ -24,9 +24,9 @@ When the toggle button is set to Tailscale, the screen shows `tailscale` and the
    ssh root@<router-ip> 'chmod +x /etc/gl-switch.d/tailscale.sh'
    ```
 
-2. **Patch the screen display script once (add `tailscale` mode)**
+2. **Patch the screen display script (add `tailscale` mode)**
 
-   On the router:
+   Run on the router:
 
    ```sh
    FILE=/usr/bin/screen_disp_switch
