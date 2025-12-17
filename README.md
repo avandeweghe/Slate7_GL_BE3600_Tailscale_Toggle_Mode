@@ -26,7 +26,7 @@ When the toggle button is set to Tailscale, the screen shows `tailscale` and the
 
 2. **Patch the screen display script (add `tailscale` mode)**
 
-   Run on the router:
+   Run on the router via ssh:
 
    ```sh
    FILE=/usr/bin/screen_disp_switch
